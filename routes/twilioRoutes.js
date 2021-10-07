@@ -3,7 +3,7 @@ const router = express.Router();
 
 const twilioController = require("../controllers/twilioController");
 
-router.post("/createroom", twilioController.createRoom);
-router.get("/accesstoken", twilioController.accessToken);
+router.post("/create", twilioController.createRoom);
+router.post("/connect", twilioController.connectRoom);
 
 module.exports = router;

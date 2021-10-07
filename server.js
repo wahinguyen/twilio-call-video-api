@@ -12,7 +12,7 @@ process.on("uncaughtException", (err) => {
 const app = require("./app");
 
 // Start the server
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 5001;
 app.listen(port, () => {
   console.log(`Application is running on port ${port}`);
 });
