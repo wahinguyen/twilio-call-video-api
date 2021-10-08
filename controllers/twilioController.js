@@ -1,15 +1,36 @@
 const twilio = require("twilio");
+const twilioConfig = require("../utils/twilioConfig");
+const { body, validationResult } = require("express-validator");
 
 const AccessToken = twilio.jwt.AccessToken;
 const VideoGrant = AccessToken.VideoGrant;
 
-const twilioAccountSid = process.env.ACCOUNT_SID;
-const twilioApiKey = process.env.API_KEY;
-const twilioApiSecret = process.env.API_SECRET;
-const authToken = process.env.AUTH_TOKEN;
+exports.validate = (method) => {
+  switch (method) {
+    case "createRoom": {
+      return [
+        body("roomId", "roomId does not exists").exists(),
+        body("doctorId", "doctorId does not exists").exists(),
+      ];
+    }
+    case "connectRoom": {
+      return [
+        body("roomId", "roomId does not exists").exists(),
+        body("patientId", "roomId does not exists").exists(),
+      ];
+    }
+  }
+};
 
 exports.connectRoom = (req, res, next) => {
   try {
+    const errors = validationResult(req); // Finds the validation errors in this request and wraps them in an object with handy functions
+
+    if (!errors.isEmpty()) {
+      res.status(422).json({ errors: errors.array() });
+      return;
+    }
+
     const { roomId, patientId } = req.body;
     const ROOM = roomId;
     const accessToken = generateAccessToken(patientId, ROOM);
@@ -26,6 +47,13 @@ exports.connectRoom = (req, res, next) => {
 
 exports.createRoom = async (req, res, next) => {
   try {
+    const errors = validationResult(req); // Finds the validation errors in this request and wraps them in an object with handy functions
+
+    if (!errors.isEmpty()) {
+      res.status(422).json({ errors: errors.array() });
+      return;
+    }
+
     const { roomId, doctorId } = req.body;
     const ROOM = roomId;
 
@@ -43,7 +71,7 @@ exports.createRoom = async (req, res, next) => {
 };
 
 const createOneRoom = async (roomName) => {
-  const client = twilio(twilioAccountSid, authToken);
+  const client = twilio(twilioConfig.twilioAccountSid, twilioConfig.authToken);
   let room;
   try {
     // Fetch the room by name from the API.
@@ -65,9 +93,9 @@ const createOneRoom = async (roomName) => {
 
 const generateAccessToken = (identity, roomName) => {
   const accessToken = new AccessToken(
-    twilioAccountSid,
-    twilioApiKey,
-    twilioApiSecret,
+    twilioConfig.twilioAccountSid,
+    twilioConfig.twilioApiKey,
+    twilioConfig.twilioApiSecret,
     { identity }
   );
   // Create an access token
