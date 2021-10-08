@@ -9,14 +9,14 @@ exports.validate = (method) => {
   switch (method) {
     case "createRoom": {
       return [
-        body("roomId", "roomId does not exists").exists(),
-        body("doctorId", "doctorId does not exists").exists(),
+        body("roomId", "roomId is required").exists(),
+        body("doctorId", "doctorId is required").exists(),
       ];
     }
     case "connectRoom": {
       return [
-        body("roomId", "roomId does not exists").exists(),
-        body("patientId", "patientId does not exists").exists(),
+        body("roomId", "roomId is required").exists(),
+        body("patientId", "patientId is required").exists(),
       ];
     }
   }
