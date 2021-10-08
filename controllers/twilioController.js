@@ -12,13 +12,12 @@ exports.connectRoom = (req, res, next) => {
   try {
     const { roomId, patientId } = req.body;
     const ROOM = roomId;
-    const accessToken = generateAccessToken(patientId);
-    const accessTokenString = generateAccessTokenString(accessToken, ROOM);
+    const accessToken = generateAccessToken(patientId, ROOM);
 
     res.status(200).json({
       status: "success",
       roomId: ROOM,
-      token: accessTokenString,
+      token: accessToken,
     });
   } catch (err) {
     next(err);
