@@ -31,13 +31,12 @@ exports.createRoom = async (req, res, next) => {
     const ROOM = roomId;
 
     await createOneRoom(ROOM);
-    const accessToken = generateAccessToken(doctorId);
-    const accessTokenString = generateAccessTokenString(accessToken, ROOM);
+    const accessToken = generateAccessToken(doctorId, ROOM);
 
     res.status(200).json({
       status: "success",
       roomId: ROOM,
-      token: accessTokenString,
+      token: accessToken,
     });
   } catch (err) {
     next(err);
@@ -65,18 +64,13 @@ const createOneRoom = async (roomName) => {
   }
 };
 
-const generateAccessToken = (id) => {
+const generateAccessToken = (identity, roomName) => {
   const accessToken = new AccessToken(
     twilioAccountSid,
     twilioApiKey,
     twilioApiSecret,
-    { id }
+    { identity }
   );
-  // Add the grant to the access token.
-  return accessToken;
-};
-
-const generateAccessTokenString = (accessToken, roomName) => {
   // Create an access token
   // Start with a grant that gives access to just the named room.
   const grant = new VideoGrant({ room: roomName });
@@ -86,3 +80,14 @@ const generateAccessTokenString = (accessToken, roomName) => {
 
   return accessToken.toJwt();
 };
+
+// const generateAccessTokenString = (accessToken, roomName) => {
+//   // Create an access token
+//   // Start with a grant that gives access to just the named room.
+//   const grant = new VideoGrant({ room: roomName });
+
+//   // Add the grant to the access token.
+//   accessToken.addGrant(grant);
+
+//   return accessToken.toJwt();
+// };
