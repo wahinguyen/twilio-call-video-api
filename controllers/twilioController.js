@@ -16,7 +16,7 @@ exports.validate = (method) => {
     case "connectRoom": {
       return [
         body("roomId", "roomId does not exists").exists(),
-        body("patientId", "roomId does not exists").exists(),
+        body("patientId", "patientId does not exists").exists(),
       ];
     }
   }
